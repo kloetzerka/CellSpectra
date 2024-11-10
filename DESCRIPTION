@@ -1,0 +1,22 @@
+Package: CellSpectra
+Type: Package
+Title: A statistical framework for identifying cell type-specific gains and losses in pathway coordination between sample sets
+Version: 0.1.0
+Author: Konstantin Klötzer, Nancy R. Zhang, Katalin Susztak
+Maintainer: The package maintainer <konstantin.kloetzer@gmail.com>
+Description: Stay tuned for final release... Peer Review Version!
+License: Peer Review Only!
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
+Imports:
+    dplyr,
+    magrittr,
+    stats,
+    utils,
+    Matrix,
+    KEGGREST, 
+    methods, 
+    tidyr
+Suggests:
+    Seurat
