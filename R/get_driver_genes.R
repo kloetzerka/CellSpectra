@@ -24,6 +24,8 @@
 #' @export
 get_driver_genes <- function(output_folder_base, gene_set_name, cell_type, sample_of_interest, expression_threshold = 0) {
 
+  CHISQ.MAX = 4
+
   cell_types = c(cell_type)
 
   soi = sample_of_interest

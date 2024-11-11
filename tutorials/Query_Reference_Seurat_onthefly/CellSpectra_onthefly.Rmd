@@ -1,5 +1,5 @@
 ---
-title: "scSpectra: Query - Reference analysis from a Seurat object"
+title: "CellSpectra: Query - Reference analysis from a Seurat object"
 author: "Konstantin A. Klötzer"
 date: "`r Sys.Date()`"
 output:
@@ -13,20 +13,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Getting started
 
-scSpectra compares the gene expression pattern of a function or pathway in a 
+CellSpectra compares the gene expression pattern of a function or pathway in a 
 query with the same expression pattern in a reference. A p value indicates if a 
 significant deviation from the expected gene expression in observed.
 
-The following example shows the "gold standard" in scSpectra analysis starting 
+The following example shows the "gold standard" in CellSpectra analysis starting 
 from a Seurat object. 
-We realised that differences in cell numbers / expression sparsity can have an 
-impact on spectra results. This can be significantly improved by performing an 
+We realized that differences in cell numbers / expression sparsity can have an 
+impact on CellSpectra results. This can be significantly improved by performing an 
 "onthefly" analysis. Thereby, reference samples match the total counts of each 
 query individual query sample.
 
 ```{r load spectra and dependencies, message=FALSE, warning=FALSE}
 library(dplyr)
-library(scSpectra)
+library(CellSpectra)
 library(Seurat)
 
 #we should also define an output folder for our analysis 
@@ -35,29 +35,29 @@ output_folder_base = "output/" #don't forget to add the final / !
 
 ## loading data and gene sets
 
-To run the "onthefly" version of scSpectra we need two things:
+To run the "onthefly" version of CellSpectra we need two things:
 
 1.) A seurat object storing our single cell raw counts of query and reference 
 samples
 
-scSpectra expects specific metadata columns within this object and raw counts 
-accesible as a matrix. 
-We will prepare the object with one of the scSpectra functions to make sure 
+CellSpectra expects specific metadata columns within this object and raw counts 
+accessible as a matrix. 
+We will prepare the object with one of the CellSpectra functions to make sure 
 everything runs smooth.
 
-2.) A gene set database with genes grouped into funtionally-related pathways or 
+2.) A gene set database with genes grouped into functionally-related pathways or 
 functions.
 
-scSpectra expects the gene sets in a binary matrix of genes (rows) and gene sets 
+CellSpectra expects the gene sets in a binary matrix of genes (rows) and gene sets 
 (columns) with 0 and 1 indicating if a gene belongs to a gene set. You can 
-import this matrix yourself or you use one of the scSpectra functions to create 
+import this matrix yourself or you use one of the CellSpectra functions to create 
 such a matrix.
 
-```{r load seurat object, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+```{r load seurat object, message=FALSE, warning=FALSE}
 #here we use the example ifnb dataset from Seurat.data to show basic functions
 seurat_object <- readRDS("ifnb.rds")
 
-#now we adapt the metadata columns. scSpectra needs to find the cell type 
+#now we adapt the metadata columns. CellSpectra needs to find the cell type 
 #annotation, sample identifier, conditions (query and reference). This can be 
 #done with the prepare_seurat_object function
 
@@ -80,7 +80,7 @@ do that is the process_gene_sets function and a library .txt file downloaded
 from the enrichR website. Here we will use GO terms but any library can be 
 downloaded and used.
 
-```{r prepare gene sets, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+```{r prepare gene sets, message=FALSE, warning=FALSE, paged.print=FALSE, results='hide'}
 #prepare database
 process_gene_sets(
   filename = "GO_Biological_Process_2023.txt", #downloaded file from enrichR
@@ -130,7 +130,7 @@ The cell_number_threshold makes sure that only samples with a sufficient number
 of cells will be analyzed. We recommend at least 10 cells per sample. 
 Higher numbers might increase robustness.
 
-```{r create reference, eval=FALSE, include=FALSE}
+```{r create reference, message=FALSE, warning=FALSE}
 #create references
 create_references(
   seurat_object = seurat_object,
@@ -143,30 +143,34 @@ create_references(
 
 ```
 
-Note: In a real world dataset scSpectra benefits from a wide and heterogenous 
+Note: In a real world dataset CellSpectra benefits from a wide and heterogeneous 
 reference representing the natural (technical and biological) variance across 
 samples. The ifnb dataset is not really well suited for this kind of analysis 
 without any biological replicates. The gene expression of any gene set is almost 
 identical across our 10 sampling replicates. Therefore, the query will be 
 significantly different from this pattern in most gene sets.
 
-## Running scSpectra
+## Running CellSpectra
 
 If we followed these instructions we should have an output folder now containing 
 everything we need to run spectra. While this can take quite long for large 
 datasets and many cell types and gene sets, splitting the reference generation 
-from the scpectra analysis will save resources (creating references is memory 
+from the CellSpectra analysis will save resources (creating references is memory 
 intensive, running spectra is not).
 
-The following function we compute fdr corrected p values and R2 values for each 
-cell type, query sample, and gene set.
+The following function we compute p values, fdr corrected p values, and R2 values 
+for each cell type, query sample, and gene set. We report the QC summary for each 
+query and set the expression threshold to -1 to not remove any low expressed genes
 
-```{r run spectra, eval=FALSE, include=FALSE}
+```{r run spectra, message=FALSE, warning=FALSE}
 
 run_spectra(
   output_folder_base = output_folder_base,
-  cell_types = c("CD14 Mono", "CD4 Naive T", "CD4 Memory T"), #evtl. parallelize
-  CHISQ.MAX = 4 #this value cuts off the contribution of individual genes   
+  cell_types = c("CD14 Mono", "CD4 Naive T", "CD4 Memory T"), #parallelize
+  CHISQ.MAX = 4, #this value cuts off the contribution of individual genes   
+  expression_threshold = -1, #this makes sure no genes are genes are filtered
+  QC_report = TRUE 
+  
 )
 
 ```
@@ -175,9 +179,9 @@ You can now check the csv results and use them for further downstream analysis.
 
 ## Final Remarks
 
-We hope this helps to run Spectra "onthefly" starting from a Seurat object 
+We hope this helps to run CellSpectra "onthefly" starting from a Seurat object 
 and an enrichR library text file of any database. It's also possible to run 
-spectra from any (pseudo) bulk matrix without "onthefly" reference generation. 
+CS from any (pseudo) bulk matrix without "onthefly" reference generation. 
 We did that to compute the coordination within conditions 
 (loo_coordination_from_matrix) or to analyse bulk RNA-seq data 
 (run_spectra_from_matrix).
