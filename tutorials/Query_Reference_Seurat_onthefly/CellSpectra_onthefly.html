@@ -11,7 +11,7 @@
 
 <meta name="author" content="Konstantin A. Klötzer" />
 
-<meta name="date" content="2024-11-10" />
+<meta name="date" content="2024-12-14" />
 
 <title>CellSpectra: Query - Reference analysis from a Seurat object</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">CellSpectra: Query - Reference analysis
 from a Seurat object</h1>
 <h4 class="author">Konstantin A. Klötzer</h4>
-<h4 class="date">2024-11-10</h4>
+<h4 class="date">2024-12-14</h4>
 
 </div>
 
@@ -365,11 +365,11 @@ pathway in a query with the same expression pattern in a reference. A p
 value indicates if a significant deviation from the expected gene
 expression in observed.</p>
 <p>The following example shows the “gold standard” in CellSpectra
-analysis starting from a Seurat object. We realized that differences in
-cell numbers / expression sparsity can have an impact on CellSpectra
-results. This can be significantly improved by performing an “onthefly”
-analysis. Thereby, reference samples match the total counts of each
-query individual query sample.</p>
+analysis starting from a Seurat object (developed with Seurat V4). We
+realized that differences in cell numbers / expression sparsity can have
+an impact on single-cell analysis results. This can be significantly
+improved by performing an “onthefly” analysis. Thereby, reference
+samples match the total counts of each individual query sample.</p>
 <pre class="r"><code>library(dplyr)
 library(CellSpectra)
 library(Seurat)
@@ -381,7 +381,7 @@ output_folder_base = &quot;output/&quot; #don&#39;t forget to add the final / !<
 <h2>loading data and gene sets</h2>
 <p>To run the “onthefly” version of CellSpectra we need two things:</p>
 <p>1.) A seurat object storing our single cell raw counts of query and
-reference samples</p>
+reference samples (Developmental version: Seurat V4)</p>
 <p>CellSpectra expects specific metadata columns within this object and
 raw counts accessible as a matrix. We will prepare the object with one
 of the CellSpectra functions to make sure everything runs smooth.</p>
@@ -412,7 +412,9 @@ include all necessary information to proceed.</p>
 easiest way to do that is the process_gene_sets function and a library
 .txt file downloaded from the enrichR website. Here we will use GO terms
 but any library can be downloaded and used.</p>
-<pre class="r"><code>#prepare database
+<pre class="r"><code>dir.create(output_folder_base)
+
+#prepare database
 process_gene_sets(
   filename = &quot;GO_Biological_Process_2023.txt&quot;, #downloaded file from enrichR
   seurat_object = seurat_object,
@@ -449,6 +451,9 @@ counts) compared to a reference sample, we will only use half the cells
 of the reference. So basically, we can make two replicates from the one
 reference sample. num_replicates = 2. If the size is the same or the
 query has even more cells, num_replicates should be one.</p>
+<p>In the example below we will simply simulate more replicates by
+setting num_replicates = 10. This doesn’t make sense from the
+statistical view. This is simply to demonstrate the basic functions.</p>
 <p>This function will generate subfolders within the output folder for
 each cell type of interest (specify in cell_types) with subfolders for
 each query sample. The cell_number_threshold makes sure that only

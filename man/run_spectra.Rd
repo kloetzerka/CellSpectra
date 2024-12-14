@@ -34,7 +34,7 @@ Default 0.}
 Default 10 genes.}
 
 \item{restrict_to_sample}{Set TRUE if you want to specify the samples to run
-scSpectra on. If FALSE, the tool will run analysis based on the
+CellSpectra on. If FALSE, the tool will run analysis based on the
 valid_samples file created by the create_references function.
 Make sure to specify the vector_of_samples.
 Default: FALSE.}
@@ -56,7 +56,7 @@ Default: TRUE.}
 Does not return any value, but outputs files to the specified directory.
 }
 \description{
-This function performs the actual scSpectra analysis on our created references from a seurat object, calculates R² and p-values for each gene set, and saves the results in
+This function performs the actual CellSpectra analysis on our created references from a seurat object, calculates R² and p-values for each gene set, and saves the results in
 specified subfolders ('R2' and 'Pval') within the output directory. Only needs the output folder from the create_references function and the cell types to analyze.
 }
 \examples{

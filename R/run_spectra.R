@@ -1,6 +1,6 @@
 #' Run Spectra Analysis
 #'
-#' This function performs the actual scSpectra analysis on our created references from a seurat object, calculates R² and p-values for each gene set, and saves the results in
+#' This function performs the actual CellSpectra analysis on our created references from a seurat object, calculates R² and p-values for each gene set, and saves the results in
 #' specified subfolders ('R2' and 'Pval') within the output directory. Only needs the output folder from the create_references function and the cell types to analyze.
 #'
 #' @importFrom stats lm pchisq sd p.adjust
@@ -18,7 +18,7 @@
 #' @param gene_number_threshold Number of genes in a gene set after filtering needed to perform analysis. If less genes remaining, results will be NA.
 #'        Default 10 genes.
 #' @param restrict_to_sample Set TRUE if you want to specify the samples to run
-#'        scSpectra on. If FALSE, the tool will run analysis based on the
+#'        CellSpectra on. If FALSE, the tool will run analysis based on the
 #'        valid_samples file created by the create_references function.
 #'        Make sure to specify the vector_of_samples.
 #'        Default: FALSE.

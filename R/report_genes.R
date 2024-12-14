@@ -1,4 +1,4 @@
-#' Get Driver Genes
+#' Report Genes
 #'
 #' This function identifies driver genes for a specific cell type, function, and sample of interest.
 #' It calculates residuals for each gene, normalized by the reference LOO distribution, and returns a
@@ -18,11 +18,11 @@
 #' #' @examples
 #' #gene_set_name = "Postsynaptic Membrane Organization (GO:0001941)"
 #' #output_folder_base = "/.../output_human_extended/"
-#' #drivinggenes <- get_driver_genes(output_folder_base, gene_set_name, cell_type = "TAL",
+#' #drivinggenes <- report_genes(output_folder_base, gene_set_name, cell_type = "TAL",
 #' #sample_of_interest = "sample")
 #'
 #' @export
-get_driver_genes <- function(output_folder_base, gene_set_name, cell_type, sample_of_interest, expression_threshold = 0) {
+report_genes <- function(output_folder_base, gene_set_name, cell_type, sample_of_interest, expression_threshold = 0) {
 
   CHISQ.MAX = 4
 

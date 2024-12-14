@@ -1,8 +1,10 @@
 ---
-title: 'CellSpectra: Advanced Parameters and Driver Genes'
+title: 'CellSpectra: Advanced Parameters and Underlying Genes'
 author: "Konstantin A. Klötzer"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +16,9 @@ We will now focus on some of the CellSpectra parameters and how they impact
 analysis results. We will first load our packages, define an output_folder_base, 
 load a seurat object (subsetted version of our extended human kidney atlas), and
 define some columns for seurat_object preparation (see our Query_Reference_
-Tutorial if not familiar).
+Tutorial if not familiar). 
+
+Cave: Developmental version using Seurat V4 objects!
 
 Note: This object has condition information stored in "disease_grouped_qr" column
 with one query sample ("sample_of_interest") and a few healthy reference samples
@@ -27,6 +31,8 @@ library(CellSpectra)
 library(KEGGREST)
 
 output_folder_base = "output/" 
+
+dir.create(output_folder_base)
 
 seurat_object = readRDS("Human_PT_subset.rds")
 
@@ -158,28 +164,28 @@ This is a highly coordinated pathway within our reference. While our query R2 of
 0.91 is still high, our p value gives us confidence that our diseased sample shows
 significant changes within this pathway. 
 
-## Focusing on driver genes
+## Focusing on underlying genes
 We next want to understand which gene expression changes are responsible for the 
 observed "dyscoordination" in the cAMP.signaling.pathway. We can use our 
-get_driver_genes() function to do that: 
-```{r Get Driver Genes, echo=TRUE, message=FALSE, warning=FALSE}
+report_genes() function to do that: 
+```{r Report Genes, echo=TRUE, message=FALSE, warning=FALSE}
 
 CHISQ.MAX = 4
 gene_set_name = "hsa04024 cAMP signaling pathway - Homo sapiens (human)"
 
-drivinggenes1 <- get_driver_genes(output_folder_base, gene_set_name, 
+drivinggenes1 <- report_genes(output_folder_base, gene_set_name, 
                                  cell_type = "PT", 
                                  sample_of_interest = "32-2")
 
 ```
 
-```{r Plot Driver Genes, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Plot Underlying Genes, echo=TRUE, message=FALSE, warning=FALSE}
 
 #we can load our query and on-the-fly reference for plotting
 datH = readRDS("output/PT/subfolder_sample_32-2/datH.rds")
 datD = readRDS("output/PT/subfolder_sample_32-2/datD.rds")
 
-#positive driver gene example
+#positive underlying gene example
 gene_neg <- "CREB3L2"
 expression_H_neg <- datH[, gene_neg]
 expression_D_neg <- datD[, gene_neg]
@@ -201,7 +207,7 @@ plot(density_H_neg, main = paste(gene_neg),
 abline(v = expression_D_neg, col = "red", lwd = 4, lty = 2)
 points(expression_D_neg, 0, col = "red", pch = 19)
 
-#negative driver gene example
+#negative underlying gene example
 gene_neg <- "CNGA1"
 expression_H_neg <- datH[, gene_neg]
 expression_D_neg <- datD[, gene_neg]
@@ -227,7 +233,7 @@ points(expression_D_neg, 0, col = "red", pch = 19)
 The blue line indicates the reference gene expression distribution with the red line
 indicating the gene expression of the query. Since we only had a very small 
 reference for demonstration purposes, the results are not very robust, but can 
-show some trends. Plotting example driver genes can help us to better understand 
+show some trends. Plotting example underlying genes can help us to better understand 
 the underlying gene expression changes. Next, we will repeat the analysis after 
 adjusting some CellSpectra parameters.
 
@@ -243,7 +249,7 @@ investigation. For example, we applied gene filtering to the KEGG analysis in ou
 manuscript to improve the robustness of our results. However, especially in rare 
 cell types zero inflation is very common after pseudobulking, and filtering too 
 stringent means that analysis cannot be performed for most pathways. We always 
-recommend to apply gene filtering when focusing on driver genes. 
+recommend to apply gene filtering when focusing on underlying genes. 
 
 ```{r Run Spectra with gene filtering, echo=TRUE, message=FALSE, warning=FALSE}
 #Step 2
@@ -272,20 +278,20 @@ but the data has a high count of zeros / very few cells, it might be advisable t
 check robustness of significant pathways for the filtering of low expressed genes. 
 Does my identified pathway of interest stay significant after repeating 
 the analysis with a more stringent filtering applied? Can I extract meaningful 
-driver genes with significant gene expression changes? Does my QC report indicate
+underlying genes with significant gene expression changes? Does my QC report indicate
 a good estimation of V1, with a small SD? If the answer to all these questions is
 no, a critical view on the result might be appropriate. 
 
 
 
 ## Impact of CHISQ.MAX
-We already took a look at our driver genes underlying the "dyscoordination" p value.
-One very easy and intuitive interpretation of driver genes in this context is the 
+We already took a look at our underlying genes underlying the "dyscoordination" p value.
+One very easy and intuitive interpretation of underlying genes in this context is the 
 question, if my gene in the query showed a much higher or much lower expression 
 level compared to what was expected based on the reference gene expression pattern 
 estimation (if our query could be perfectly predicted by the linear model). For 
 the chi-square statistic we are applying, we are squaring the "normalized residuals"
-that can be extracted with the get_driver_genes() function. However, we don't want
+that can be extracted with the report_genes() function. However, we don't want
 individual genes to drive our p value. Therefore, we define the max. value that 
 a gene can have after its "normalized residual" is squared (CHISQ.MAX). 
 This parameter does not have an impact on the R2!
@@ -304,9 +310,9 @@ RAC1
 3.7808482458
 
 A CHISQ.MAX = 4 (CellSpectra's default) corresponds to a normalized residual of 
-2 or -2. (2^2 = 4). In other words, any driver gene with a value greater than 
+2 or -2. (2^2 = 4). In other words, any underlying gene with a value greater than 
 2 is automatically set to 2. This would be the case for all of our top 3 pos 
-driver genes. These caveats ensure that the entire pathway is dyscoordinated, 
+underlying genes. These caveats ensure that the entire pathway is dyscoordinated, 
 and not just very few individual genes. 
 
 We will now check what impact CHISQ.MAX = 4 will have on our pval:
@@ -356,8 +362,8 @@ system or do I see less significant features than what was expected? Is my gene 
 database used in the unsupervised analysis too large (correction for multiple testing)?
 Are too many pathways removed from the analysis due to the gene filtering?
 
-4.) Driver genes: Once my significant pathways were identified, can I describe the 
-changes of the underlying driver genes and can I confirm these changes in 
+4.) Underlying genes: Once my significant pathways were identified, can I describe the 
+changes of the underlying genes and can I confirm these changes in 
 other samples of the same condition?
 
 
@@ -366,7 +372,7 @@ other samples of the same condition?
 I Gene filtering
 Pro: 
 + Increases robustness of results
-+ Highly recommended for the identification of driver genes
++ Highly recommended for the identification of underlying genes
 
 Con:
 - Some pathways might be analyzed in one query but not the other 
