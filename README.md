@@ -33,7 +33,9 @@ sp_2.1-3 dplyr_1.1.4 Matrix_1.6-5
 and SeuratObject)
 
 download the .tar.gz file and change to the respective path
-install.packages("/.../CellSpectra_0.1.0.tar.gz", repos = NULL, type = "source")
+
+
+### install.packages("/.../CellSpectra_0.1.0.tar.gz", repos = NULL, type = "source")
 
 See the Installation Tutorial for more details!
 
