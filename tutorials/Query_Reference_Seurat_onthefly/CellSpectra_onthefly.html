@@ -11,7 +11,7 @@
 
 <meta name="author" content="Konstantin A. Klötzer" />
 
-<meta name="date" content="2024-12-14" />
+<meta name="date" content="2025-01-19" />
 
 <title>CellSpectra: Query - Reference analysis from a Seurat object</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">CellSpectra: Query - Reference analysis
 from a Seurat object</h1>
 <h4 class="author">Konstantin A. Klötzer</h4>
-<h4 class="date">2024-12-14</h4>
+<h4 class="date">2025-01-19</h4>
 
 </div>
 
@@ -370,7 +370,9 @@ realized that differences in cell numbers / expression sparsity can have
 an impact on single-cell analysis results. This can be significantly
 improved by performing an “onthefly” analysis. Thereby, reference
 samples match the total counts of each individual query sample.</p>
-<pre class="r"><code>library(dplyr)
+<pre class="r"><code>start.time &lt;- Sys.time()
+
+library(dplyr)
 library(CellSpectra)
 library(Seurat)
 
@@ -508,6 +510,75 @@ reference generation. We did that to compute the coordination within
 conditions (loo_coordination_from_matrix) or to analyse bulk RNA-seq
 data (run_spectra_from_matrix).</p>
 <p>Check our Repositories for more information.</p>
+<pre class="r"><code>end.time &lt;- Sys.time()
+
+execution_time &lt;- end.time - start.time
+
+print(execution_time)</code></pre>
+<pre><code>## Time difference of 3.48365 mins</code></pre>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.2.2 (2022-10-31)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS 15.1.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] Seurat_5.0.3       SeuratObject_5.0.1 sp_2.1-3           CellSpectra_0.1.0 
+## [5] dplyr_1.1.4       
+## 
+## loaded via a namespace (and not attached):
+##   [1] Rtsne_0.17             colorspace_2.1-0       deldir_2.0-4          
+##   [4] ellipsis_0.3.2         ggridges_0.5.6         XVector_0.38.0        
+##   [7] RcppHNSW_0.6.0         spatstat.data_3.0-4    rstudioapi_0.14       
+##  [10] leiden_0.4.3.1         listenv_0.9.1          ggrepel_0.9.3         
+##  [13] RSpectra_0.16-1        fansi_1.0.6            codetools_0.2-19      
+##  [16] splines_4.2.2          cachem_1.0.6           knitr_1.45            
+##  [19] polyclip_1.10-6        spam_2.10-0            jsonlite_1.8.4        
+##  [22] ica_1.0-3              cluster_2.1.4          png_0.1-8             
+##  [25] uwot_0.1.14            spatstat.sparse_3.0-3  sctransform_0.4.1     
+##  [28] shiny_1.8.0            compiler_4.2.2         httr_1.4.5            
+##  [31] lazyeval_0.2.2         Matrix_1.6-5           fastmap_1.1.1         
+##  [34] cli_3.6.3              later_1.3.0            htmltools_0.5.4       
+##  [37] tools_4.2.2            igraph_1.3.5           dotCall64_1.1-1       
+##  [40] gtable_0.3.1           glue_1.8.0             GenomeInfoDbData_1.2.9
+##  [43] reshape2_1.4.4         RANN_2.6.1             Rcpp_1.0.10           
+##  [46] scattermore_1.2        jquerylib_0.1.4        vctrs_0.6.5           
+##  [49] Biostrings_2.66.0      nlme_3.1-164           spatstat.explore_3.2-7
+##  [52] progressr_0.14.0       lmtest_0.9-40          spatstat.random_3.2-3 
+##  [55] stringr_1.5.1          xfun_0.42              globals_0.16.3        
+##  [58] mime_0.12              miniUI_0.1.1.1         lifecycle_1.0.4       
+##  [61] irlba_2.3.5.1          goftest_1.2-3          future_1.33.2         
+##  [64] zlibbioc_1.44.0        MASS_7.3-58.2          zoo_1.8-12            
+##  [67] scales_1.3.0           spatstat.utils_3.0-4   promises_1.2.0.1      
+##  [70] parallel_4.2.2         RColorBrewer_1.1-3     yaml_2.3.7            
+##  [73] gridExtra_2.3          reticulate_1.34.0      pbapply_1.7-2         
+##  [76] ggplot2_3.5.0          sass_0.4.5             stringi_1.8.4         
+##  [79] S4Vectors_0.36.1       fastDummies_1.7.3      BiocGenerics_0.44.0   
+##  [82] GenomeInfoDb_1.34.9    rlang_1.1.4            pkgconfig_2.0.3       
+##  [85] bitops_1.0-7           matrixStats_0.63.0     evaluate_0.20         
+##  [88] lattice_0.20-45        tensor_1.5             ROCR_1.0-11           
+##  [91] purrr_1.0.2            patchwork_1.2.0        htmlwidgets_1.6.1     
+##  [94] cowplot_1.1.3          tidyselect_1.2.1       parallelly_1.37.1     
+##  [97] RcppAnnoy_0.0.20       plyr_1.8.8             magrittr_2.0.3        
+## [100] R6_2.5.1               IRanges_2.32.0         generics_0.1.3        
+## [103] withr_3.0.2            pillar_1.9.0           fitdistrplus_1.1-11   
+## [106] abind_1.4-5            survival_3.5-0         KEGGREST_1.38.0       
+## [109] RCurl_1.98-1.10        tibble_3.2.1           future.apply_1.11.1   
+## [112] crayon_1.5.2           KernSmooth_2.23-20     utf8_1.2.4            
+## [115] spatstat.geom_3.2-9    plotly_4.10.3          rmarkdown_2.20        
+## [118] grid_4.2.2             data.table_1.14.8      digest_0.6.31         
+## [121] xtable_1.8-4           tidyr_1.3.1            httpuv_1.6.14         
+## [124] stats4_4.2.2           munsell_0.5.0          viridisLite_0.4.1     
+## [127] bslib_0.4.2</code></pre>
 </div>
 
 

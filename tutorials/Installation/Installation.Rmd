@@ -1,0 +1,54 @@
+---
+title: "Installation"
+author: "Konstantin A. Klötzer"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Dependencies
+KEGGREST
+Seurat 
+SeuratObject
+sp
+dplyr
+Matrix
+
+If not installed already, we recommend to first install the latest version of Seurat 
+and SeuratObject. 
+
+```{r uninstall / install CellSpectra}
+
+# we remove the last version to demonstrate installation
+remove.packages("CellSpectra")
+
+#time stamp
+start.time <- Sys.time()
+
+# download the .tar.gz file and change to the respective path
+install.packages("/Users/konstantin/Documents/GitHub/CellSpectra_0.1.0.tar.gz", repos = NULL, type = "source")
+
+```
+
+## Load
+
+Check if we can load CellSpectra
+
+```{r pressure, echo=FALSE}
+library(CellSpectra)
+```
+
+```{r Session Information, echo=TRUE, message=TRUE, warning=FALSE}
+end.time <- Sys.time()
+
+execution_time <- end.time - start.time
+
+print(execution_time)
+
+sessionInfo()
+```

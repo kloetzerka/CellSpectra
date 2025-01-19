@@ -3,8 +3,8 @@ title: 'CellSpectra: Advanced Parameters and Underlying Genes'
 author: "Konstantin A. Klötzer"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -24,6 +24,9 @@ Note: This object has condition information stored in "disease_grouped_qr" colum
 with one query sample ("sample_of_interest") and a few healthy reference samples
 
 ```{r Load and prepare, message=FALSE, warning=FALSE}
+
+start.time <- Sys.time()
+
 library(Matrix)
 library(dplyr)
 library(Seurat)
@@ -109,7 +112,9 @@ any low expression genes for now.
 
 ```{r Run Spectra, echo=TRUE, message=FALSE, warning=FALSE}
 #Step 2
-run_spectra(output_folder_base = output_folder_base, cell_types = c("PT"), CHISQ.MAX = 4, expression_threshold = -1, gene_number_threshold = 10, QC_report = TRUE)
+run_spectra(output_folder_base = output_folder_base, cell_types = c("PT"), 
+            CHISQ.MAX = 4, expression_threshold = -1, 
+            gene_number_threshold = 10, QC_report = TRUE)
 ```
 We should now have three additional subfolders of output/
 
@@ -253,7 +258,9 @@ recommend to apply gene filtering when focusing on underlying genes.
 
 ```{r Run Spectra with gene filtering, echo=TRUE, message=FALSE, warning=FALSE}
 #Step 2
-run_spectra(output_folder_base = output_folder_base, cell_types = c("PT"), CHISQ.MAX = 4, expression_threshold = 0, gene_number_threshold = 10, QC_report = TRUE)
+run_spectra(output_folder_base = output_folder_base, cell_types = c("PT"), 
+            CHISQ.MAX = 4, expression_threshold = 0, 
+            gene_number_threshold = 10, QC_report = TRUE)
 
 #load results
 pval_df = read.csv("output/Padj/Padj_PT.csv", row.names = 1)
@@ -263,7 +270,8 @@ pval_df = t(pval_df)
 r2_df = read.csv("output/R2/R2_PT.csv", row.names = 1)
 r2_df = t(r2_df)
 
-qc_report_query = read.csv("output/PT/subfolder_sample_32-2/pathway_QC.csv", row.names = 1)
+qc_report_query = read.csv("output/PT/subfolder_sample_32-2/pathway_QC.csv", 
+                           row.names = 1)
 ```
 Here we see that not filtering genes of zero expression increased the 
 number of significant pathways in our query. Gene filtering is applied based on 
@@ -319,7 +327,9 @@ We will now check what impact CHISQ.MAX = 4 will have on our pval:
 
 ```{r Change CHISQ.MAX, echo=TRUE, message=FALSE, warning=FALSE}
 #Step 2
-run_spectra(output_folder_base = output_folder_base, cell_types = c("PT"), CHISQ.MAX = 3, expression_threshold = 0, gene_number_threshold = 10, QC_report = TRUE)
+run_spectra(output_folder_base = output_folder_base, cell_types = c("PT"), 
+            CHISQ.MAX = 3, expression_threshold = 0, 
+            gene_number_threshold = 10, QC_report = TRUE)
 
 #load results
 pval_df = read.csv("output/Padj/Padj_PT.csv", row.names = 1)
@@ -329,7 +339,8 @@ pval_df = t(pval_df)
 r2_df = read.csv("output/R2/R2_PT.csv", row.names = 1)
 r2_df = t(r2_df)
 
-qc_report_query = read.csv("output/PT/subfolder_sample_32-2/pathway_QC.csv", row.names = 1)
+qc_report_query = read.csv("output/PT/subfolder_sample_32-2/pathway_QC.csv", 
+                           row.names = 1)
 ```
 Our new results: 
 cAMP.signaling.pathway padj = 4.761164e-03
@@ -407,4 +418,12 @@ Con:
 - Especially in cases of relatively small reference samples compared to the query
   or a very small number of reference samples
 
+```{r Session Information, echo=TRUE, message=TRUE, warning=FALSE}
+end.time <- Sys.time()
 
+execution_time <- end.time - start.time
+
+print(execution_time)
+
+sessionInfo()
+```

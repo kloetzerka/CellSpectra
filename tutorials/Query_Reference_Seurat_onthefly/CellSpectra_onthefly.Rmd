@@ -3,8 +3,8 @@ title: "CellSpectra: Query - Reference analysis from a Seurat object"
 author: "Konstantin A. Klötzer"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -25,6 +25,9 @@ performing an "onthefly" analysis. Thereby, reference samples match the total
 counts of each individual query sample.
 
 ```{r load spectra and dependencies, message=FALSE, warning=FALSE}
+
+start.time <- Sys.time()
+
 library(dplyr)
 library(CellSpectra)
 library(Seurat)
@@ -194,3 +197,13 @@ We did that to compute the coordination within conditions
 (run_spectra_from_matrix).
 
 Check our Repositories for more information.
+
+```{r Session Information, echo=TRUE, message=TRUE, warning=FALSE}
+end.time <- Sys.time()
+
+execution_time <- end.time - start.time
+
+print(execution_time)
+
+sessionInfo()
+```
