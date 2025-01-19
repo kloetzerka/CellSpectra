@@ -3,7 +3,7 @@ Thank you for checking out our R package CellSpectra
 Please find additional information in our three Tutorials with example datasets 
 and R markdown files (/CellSpectra/tutorials/).
 
-1. System requirements:
+## 1. System requirements:
 
     dplyr,
     magrittr,
@@ -23,19 +23,19 @@ and R markdown files (/CellSpectra/tutorials/).
 Versions the software has been tested on:
 (for complete sessionInfo() check the tutorials!)
 
-## [1] KEGGREST_1.38.0 CellSpectra_0.1.0 Seurat_5.0.3 SeuratObject_5.0.1
-## [5] sp_2.1-3 dplyr_1.1.4 Matrix_1.6-5
+KEGGREST_1.38.0 CellSpectra_0.1.0 Seurat_5.0.3 SeuratObject_5.0.1
+sp_2.1-3 dplyr_1.1.4 Matrix_1.6-5
 
-2. Installation
+## 2. Installation
 (If not installed already, we recommend to first install the latest version of Seurat 
 and SeuratObject)
 
-# download the .tar.gz file and change to the respective path
+download the .tar.gz file and change to the respective path
 install.packages("/.../CellSpectra_0.1.0.tar.gz", repos = NULL, type = "source")
 
 See the Installation Tutorial for more details!
 
-3. Demo
+## 3. Demo
 See our two tutorials for demo data, output, and code (R markdown)
 
 Basics: 
@@ -44,7 +44,7 @@ Basics:
 Advanced: 
 /CellSpectra/tutorials/CellSpectra_advanced
 
-4. Instructions 
+## 4. Instructions 
 Code used to generate the analysis from the manuscript: 
 /CellSpectra/tutorials/Analysis_NG
 
