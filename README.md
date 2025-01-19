@@ -1,3 +1,5 @@
+### CellSpectra
+
 Thank you for checking out our R package CellSpectra
 
 Please find additional information in our three Tutorials with example datasets 
