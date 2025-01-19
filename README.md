@@ -1,4 +1,4 @@
-### CellSpectra
+# CellSpectra
 
 Thank you for checking out our R package CellSpectra
 
