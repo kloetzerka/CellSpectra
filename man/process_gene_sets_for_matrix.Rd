@@ -28,6 +28,10 @@ is the matching to a (pseudo)bulk matrix of samples (rows) and genes (columns).
 }
 \details{
 https://maayanlab.cloud/Enrichr/#libraries
+
+or
+
+https://www.gsea-msigdb.org/gsea/msigdb
 }
 \examples{
 #gene_sets_file <- "path/to/gene_sets.txt"

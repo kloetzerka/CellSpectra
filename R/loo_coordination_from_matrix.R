@@ -20,10 +20,28 @@
 #' @return Does not return anything explicitly, but saves the R² results as a CSV file in the output folder.
 #'
 #' @examples
-#' #datD_matrix <- ... # Load or create your data matrix here
-#' #go_sets <- ... # Load or create your gene sets here
-#' #loo_coordination_from_matrix(datD_matrix, go_sets, "path/to/output", "coordination_key")
+#' # Create a dummy expression matrix
+#' set.seed(123)
+#' datD <- matrix(rexp(30, rate = 1), nrow = 3, ncol = 10)
+#' colnames(datD) <- paste0("Gene", 1:10)
+#' rownames(datD) <- paste0("Sample", 1:3)
 #'
+#' # Create random gene sets
+#' go_sets <- matrix(sample(0:1, 10 * 5, replace = TRUE), nrow = 10, ncol = 5)
+#' rownames(go_sets) <- colnames(datD)  # gene names as rownames
+#' colnames(go_sets) <- paste0("Pathway", 1:5)
+#'
+#' # Create temporary output folder
+#' output_folder <- tempfile("coordination_output_example")
+#' dir.create(output_folder)
+#'
+#' # Run function
+#' loo_coordination_from_matrix(
+#'   datD = datD,
+#'   go_sets = go_sets,
+#'   output_folder = output_folder,
+#'   coordination_key = "ExampleCellType"
+#' )
 #' @export
 
 loo_coordination_from_matrix <- function(datD, go_sets, output_folder, coordination_key = "nokey") {
@@ -59,7 +77,7 @@ loo_coordination_from_matrix <- function(datD, go_sets, output_folder, coordinat
 
     r2_D_subset <- r2_D_subset[!is.nan(r2_D_subset)]
 
-    # Store R^2 results
+
     for (i in 1:length(r2_D_subset)) {
       r2_results_df <- rbind(r2_results_df, data.frame(
         GeneSet = func,

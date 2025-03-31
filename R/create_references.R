@@ -1,7 +1,7 @@
 #' Create Pseudobulk References Files from Seurat Object matching the counts of query samples.
 #'
 #' This is the "on the fly" input for our spectra analysis.
-#' It ensures that differences in cell numbers between query and reference samples drive an inflation of dyscoordination.
+#' It ensures that differences in cell numbers between query and reference samples don't drive an inflation of dyscoordination.
 #'
 #' This function processes a Seurat object to create pseudobulk references. It subsets the Seurat object
 #' by cell type, identifies valid samples based on a cell number threshold, and generates pseudobulk
@@ -9,7 +9,6 @@
 #'
 #' @importFrom dplyr group_by filter %>%
 #' @importFrom Matrix colSums t
-#' @importFrom Seurat subset
 #' @importFrom methods as
 #'
 #' @param seurat_object A Seurat object to process.
@@ -22,13 +21,45 @@
 #' @return The function does not return a value but saves output files (datH and datD matrices) in specified directories.
 #'
 #' @examples
-#' # Assuming 'seurat_object' is your Seurat object and 'output_folder_base' is defined:
-#' #create_references(seurat_object,
-#' #output_folder_base,
-#' #num_replicates = 1,
-#' #cell_types = c("CellType1", "CellType2"),
-#' #cell_number_threshold = 10,
-#' #seed = NULL)
+#' # Create dummy count matrix
+#' counts <- matrix(rpois(20, lambda = 5), nrow = 4)
+#' rownames(counts) <- paste0("Gene", 1:4)
+#' colnames(counts) <- paste0("Cell", 1:5)
+#'
+#' # Create a minimal Seurat object
+#' seurat_object <- SeuratObject::CreateSeuratObject(counts = counts)
+#'
+#' # Downgrade assay to Seurat v4-compatible structure (if Seurat v5 is used)
+#' seurat_object[["RNA"]] <- as(seurat_object[["RNA"]], Class = "Assay")
+#'
+#' # Add minimal metadata: cell type, sample, and condition
+#' seurat_object$celltypes <- c("CellType1", "CellType2", "CellType1", "CellType2", "CellType1")
+#' seurat_object$samples <- c("Sample1", "Sample1", "Sample2", "Sample2", "Sample1")
+#' seurat_object$condition <- c("ConditionA", "ConditionA", "ConditionB", "ConditionB", "ConditionA")
+#'
+#' # Create temporary output folder
+#' output_folder_base <- tempfile("output_example")
+#' dir.create(output_folder_base)
+#'
+#' # Prepare Seurat object for analysis
+#' seurat_object <- prepare_seurat_object(
+#'   seurat_object,
+#'   celltype_col = "celltypes",
+#'   sample_id_col = "samples",
+#'   condition_col = "condition",
+#'   query_list = c("ConditionB"),
+#'   control_list = c("ConditionA")
+#' )
+#'
+#' # Run the function
+#' create_references(
+#'   seurat_object = seurat_object,
+#'   output_folder_base = output_folder_base,
+#'   num_replicates = 1,
+#'   cell_types = c("CellType1", "CellType2"),
+#'   cell_number_threshold = 0,
+#'   seed = 123
+#' )
 #'
 #' @export
 
@@ -82,7 +113,7 @@ create_references <- function(seurat_object, output_folder_base = output_folder_
       #print(sum(query_counts))
 
       # Initialize ref_pseudobulk dataframe
-      num_genes <- nrow(seurat_object@assays$RNA@counts)  # Assuming 'seurat_subset' is any of the subset objects like 'set_subsetH'
+      num_genes <- nrow(seurat_object@assays$RNA@counts)
       ref_sample_ids <- intersect(valid_samples, unique(set_subsetH@meta.data$orig_ident))
       num_ref_samples <- num_replicates * length(ref_sample_ids)
       ref_pseudobulk <- data.frame(matrix(nrow = num_ref_samples, ncol = num_genes))
@@ -93,7 +124,7 @@ create_references <- function(seurat_object, output_folder_base = output_folder_
 
       colnames(ref_pseudobulk) <- rownames(seurat_object@assays$RNA@counts)
 
-      # When generating pseudobulk for reference samples:
+
       for (ref_sample in ref_sample_ids) {
         ref_sample_subset <- subset(set_subsetH, subset = orig_ident == ref_sample)
         pseudobulk_replicates <- create_pseudobulk(ref_sample_subset, query_total_count, num_replicates, seed = seed)

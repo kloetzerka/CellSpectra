@@ -34,7 +34,7 @@ process_gene_sets <- function(filename, seurat_object, output_folder_base = outp
   for (line in lines) {
     elements <- unlist(strsplit(line, "\t"))
     gene_set <- elements[1]
-    genes <- elements[-1]  # Remove the first element (gene set name)
+    genes <- elements[-1]
     gene_sets[[gene_set]] <- genes
   }
 

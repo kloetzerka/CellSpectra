@@ -7,6 +7,10 @@
 #'
 #'https://maayanlab.cloud/Enrichr/#libraries
 #'
+#'or
+#'
+#'https://www.gsea-msigdb.org/gsea/msigdb
+#'
 #' @param filename A string, the path to the file containing gene sets.
 #' @param datD A matrix, typically a pseudobulk matrix, where cols are genes.
 #' @param min_genes An integer, the minimum number of genes for a gene set to be considered valid.

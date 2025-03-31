@@ -140,7 +140,7 @@ report_genes <- function(output_folder_base, gene_set_name, cell_type, sample_of
         # Regress each disease sample on V1
         #svdepsilonD = matrix(nrow=nrow(dat_subsetD), ncol=ncol(dat_subsetD), data=0)
         svdpvalsD = rep(NA, nD_subset)
-        svdchisqD = rep(NA, nD_subset)  # This records the chi-square statistic assessing deviation of sample from normal reference.
+        svdchisqD = rep(NA, nD_subset)
         deviant.pvalD = rep(NA, nD_subset)
         chisq.df = length(svdsigmag)-1 # degree of freedom of chi-sq (number of genes) minus 1
         lmres <- lm(as.numeric(dat_subsetD) ~ V1_H)

@@ -14,7 +14,7 @@
 #'        value of 4.
 #' @param expression_threshold Genes with an average expression in the reference
 #'        OR query matrix below this threshold are removed from the analysis.
-#'        Default 0.
+#'        Default 0. Set to -1 for no filtering applied.
 #' @param gene_number_threshold Number of genes in a gene set after filtering needed to perform analysis. If less genes remaining, results will be NA.
 #'        Default 10 genes.
 #' @param restrict_to_sample Set TRUE if you want to specify the samples to run
@@ -37,11 +37,64 @@
 #' @return Does not return any value, but outputs files to the specified directory.
 #'
 #' @examples
-#' # Assuming 'seurat_object' is defined and 'output_folder_base' and 'cell_types' are set:
-#' #run_spectra(output_folder_base = output_folder_base,
-#' #cell_types = cell_types, CHISQ.MAX = 4, expression_threshold = 0,
-#' #gene_number_threshold = 10, restrict_to_sample = FALSE,
-#' #vector_of_samples = c())
+#' # Create dummy files
+#' counts <- matrix(rpois(80, lambda = 5), nrow = 10)
+#' rownames(counts) <- paste0("Gene", 1:10)
+#' colnames(counts) <- paste0("Cell", 1:8)
+#' seurat_object <- SeuratObject::CreateSeuratObject(counts = counts)
+#'
+#' # Downgrade assay to Seurat v4-compatible structure
+#' seurat_object[["RNA"]] <- as(seurat_object[["RNA"]], Class = "Assay")
+#'
+#' # Add minimal metadata
+#' seurat_object$celltypes <- c("CellType1", "CellType2", "CellType1", "CellType2",
+#'                              "CellType1", "CellType1", "CellType1", "CellType1")
+#' seurat_object$samples <- c("Sample1", "Sample1", "Sample2", "Sample2",
+#'                            "Sample1", "Sample3", "Sample3", "Sample3")
+#' seurat_object$condition <- c("ConditionA", "ConditionA", "ConditionB",
+#'                              "ConditionB", "ConditionA", "ConditionA",
+#'                              "ConditionA", "ConditionA")
+#'
+#' # Create dummy GO matrix and save
+#' genes <- paste0("Gene", 1:10)
+#' go_sets <- matrix(sample(0:1, 10 * 5, replace = TRUE), nrow = 10, ncol = 5)
+#' rownames(go_sets) <- genes
+#' colnames(go_sets) <- paste0("Pathway", 1:5)
+#' output_folder_base <- tempfile("output_example")
+#' dir.create(output_folder_base)
+#' output_folder_base <- paste0(output_folder_base, "/")
+#' go_filepath <- paste0(output_folder_base, "go_sets_modified.rds")
+#' saveRDS(go_sets, file = go_filepath)
+#'
+#' # Prepare Seurat object for analysis
+#' seurat_object <- prepare_seurat_object(
+#'   seurat_object,
+#'   celltype_col = "celltypes",
+#'   sample_id_col = "samples",
+#'   condition_col = "condition",
+#'   query_list = c("ConditionB"),
+#'   control_list = c("ConditionA")
+#' )
+#'
+#' # Run reference creation
+#' create_references(
+#'   seurat_object = seurat_object,
+#'   output_folder_base = output_folder_base,
+#'   num_replicates = 1,
+#'   cell_types = c("CellType1"),
+#'   cell_number_threshold = 0,
+#'   seed = 123
+#' )
+#'
+#' # Run spectra analysis
+#' run_spectra(
+#'   output_folder_base = output_folder_base,
+#'   cell_types = c("CellType1"),
+#'   CHISQ.MAX = 4,
+#'   expression_threshold = -1,
+#'   gene_number_threshold = 0,
+#'   restrict_to_sample = FALSE
+#' )
 #'
 #'
 #' @export
@@ -162,8 +215,6 @@ run_spectra <- function(output_folder_base = output_folder_base, cell_types = ce
         # Subset dat_subsetH and dat_subsetD to keep only the filtered genes
         dat_subsetH <- dat_subsetH[, filtered_genes, drop = FALSE]
         dat_subsetD <- dat_subsetD[, filtered_genes, drop = FALSE]
-
-
 
         # Calculate R^2 for the healthy subset with LOO
         nH_subset <- nrow(dat_subsetH)

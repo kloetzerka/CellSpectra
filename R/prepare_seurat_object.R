@@ -14,14 +14,31 @@
 #' @return A modified Seurat object with additional metadata columns: celltype_annotation, orig_ident, and query_control.
 #'
 #' @examples
-#' # Assuming you have a Seurat object 'seurat_obj':
-#' #modified_seurat <- prepare_seurat_object(seurat_obj,
-#' #"cellType",
-#' #"patientID",
-#' #"condition",
-#' #c("diseased1", "diseased2"),
-#' #c("Control"))
+#' # Create dummy count matrix
+#' counts <- matrix(rpois(20, lambda = 5), nrow = 4)
+#' rownames(counts) <- paste0("Gene", 1:4)
+#' colnames(counts) <- paste0("Cell", 1:5)
 #'
+#' # Create a minimal Seurat object
+#' seurat_object <- SeuratObject::CreateSeuratObject(counts = counts)
+#'
+#' # Downgrade assay to Seurat v4-compatible structure (if Seurat v5 is used)
+#' seurat_object[["RNA"]] <- as(seurat_object[["RNA"]], Class = "Assay")
+#'
+#' # Add minimal metadata: cell type, sample, and condition
+#' seurat_object$celltypes <- c("CellType1", "CellType2", "CellType1", "CellType2", "CellType1")
+#' seurat_object$samples <- c("Sample1", "Sample1", "Sample2", "Sample2", "Sample1")
+#' seurat_object$condition <- c("ConditionA", "ConditionA", "ConditionB", "ConditionB", "ConditionA")
+#'
+#' # Prepare Seurat object for analysis
+#' seurat_object <- prepare_seurat_object(
+#'   seurat_object,
+#'   celltype_col = "celltypes",
+#'   sample_id_col = "samples",
+#'   condition_col = "condition",
+#'   query_list = c("ConditionB"),
+#'   control_list = c("ConditionA")
+#' )
 #' @export
 
 prepare_seurat_object <- function(seurat_obj, celltype_col, sample_id_col, condition_col, query_list, control_list) {

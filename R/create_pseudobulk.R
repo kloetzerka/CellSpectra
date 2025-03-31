@@ -15,10 +15,18 @@
 #' @examples
 #' # Assuming 'seurat_subset' is a subset of a Seurat object
 #' #(reference samples + cell type of interest):
-#' #pseudobulks <- create_pseudobulk(seurat_subset,
-#' #target_count = query_counts,
-#' #num_replicates = 3,
-#' #seed = 10)
+#' #creating a minimal seurat object first:
+#' counts <- matrix(rpois(20, lambda = 5), nrow = 4)
+#' rownames(counts) <- paste0("Gene", 1:4)
+#' colnames(counts) <- paste0("Cell", 1:5)
+#' seurat_subset <- SeuratObject::CreateSeuratObject(counts = counts)
+#' #change to V4 structure
+#' seurat_subset[["RNA"]] <- as(seurat_subset[["RNA"]], Class = "Assay")
+#' # Run function
+#' pseudobulks <- create_pseudobulk(seurat_subset,
+#' target_count = 50,
+#' num_replicates = 3,
+#' seed = 10)
 #'
 #' @export
 

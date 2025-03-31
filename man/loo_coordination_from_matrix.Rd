@@ -34,8 +34,26 @@ Make sure to subset datD to only contain samples of interest (e.g. healthy vs di
 The results are then saved to a specified output file.
 }
 \examples{
-#datD_matrix <- ... # Load or create your data matrix here
-#go_sets <- ... # Load or create your gene sets here
-#loo_coordination_from_matrix(datD_matrix, go_sets, "path/to/output", "coordination_key")
+# Create a dummy expression matrix
+set.seed(123)
+datD <- matrix(rexp(30, rate = 1), nrow = 3, ncol = 10)
+colnames(datD) <- paste0("Gene", 1:10)
+rownames(datD) <- paste0("Sample", 1:3)
 
+# Create random gene sets
+go_sets <- matrix(sample(0:1, 10 * 5, replace = TRUE), nrow = 10, ncol = 5)
+rownames(go_sets) <- colnames(datD)  # gene names as rownames
+colnames(go_sets) <- paste0("Pathway", 1:5)
+
+# Create temporary output folder
+output_folder <- tempfile("coordination_output_example")
+dir.create(output_folder)
+
+# Run function
+loo_coordination_from_matrix(
+  datD = datD,
+  go_sets = go_sets,
+  output_folder = output_folder,
+  coordination_key = "ExampleCellType"
+)
 }
