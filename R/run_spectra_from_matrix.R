@@ -3,7 +3,7 @@
 #' Performs spectra analysis on given matrices query (datD) samples compared to a reference (datH).
 #' It calculates R² and p-values for each gene set and saves the results as CSV files.
 #'
-#' @param datH A normalized (e.g. tpm + log) matrix of gene expression data for healthy samples, with genes as rows.
+#' @param datH A normalized (e.g. tpm + log) matrix of gene expression data for healthy samples, with genes as columns.
 #' @param datD A normalized (e.g. tpm + log) matrix of gene expression data for diseased samples, similar to datH.
 #' @param go_sets A dataframe or matrix where columns represent gene sets. Can be generated using process_gene_sets_for_matrix function.
 #' @param output_folder The directory path where the result files will be saved.
@@ -96,6 +96,16 @@ run_spectra_from_matrix <- function(datH, datD, go_sets, output_folder, coordina
 
       if (length(common_genes) < length(selected_genes)) {
         warning(paste("Not all genes found for", func, "- proceeding with", length(common_genes), "genes"))
+      }
+
+      if (length(common_genes) < gene_number_threshold) {
+
+        warning(paste("Less genes than threshold in ", func, " - skipping gene set"))
+        svdpvals_df[sample, func] <- NA
+        svdchisq_df[sample, func] <- NA
+        r2_df[sample, func] <- NA
+        deviant.pvalD_df[sample, func] <- NA
+        next  # Skip to the next iteration of the loop
       }
 
       dat_subsetH <- datH[, common_genes, drop = FALSE]

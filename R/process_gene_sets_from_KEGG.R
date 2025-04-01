@@ -5,7 +5,9 @@
 #' matrix has to be saved manually to the output base folder ("go_sets_modified.rds")
 #'
 #' @param organism Character. The KEGG organism code (e.g., "mmu" for mouse).
-#' @param seurat_object Seurat object used for the spectra analysis.
+#' @param seurat_object Seurat object used for the spectra analysis (gene symbols to use)
+#' @param use_genes_directly  If TRUE gene_vec is used as gene symbol input.
+#' @param gene_vec Vector of genes considered in the gene set database.
 #' @return A dataframe where rows are genes and columns are KEGG pathways.
 #'         Each cell contains 1 if the gene is part of the pathway, otherwise 0.
 #' @import KEGGREST
@@ -18,9 +20,15 @@
 #'
 #' #kegg_gene_matrix <- process_gene_sets_from_KEGG(organism, seurat_object = seurat_object)
 #' #saveRDS(kegg_gene_matrix, "go_sets_modified.rds")
-process_gene_sets_from_KEGG <- function(organism, seurat_object) {
+process_gene_sets_from_KEGG <- function(organism, seurat_object, use_genes_directly = FALSE, gene_vec = c()) {
 
-  genes = rownames(seurat_object@assays$RNA)
+  if (use_genes_directly == TRUE) {
+    genes = gene_vec
+  }
+
+  if (use_genes_directly == FALSE) {
+    genes = rownames(seurat_object@assays$RNA)
+  }
 
   get_all_kegg_pathways <- function(organism) {
     pathways <- keggList("pathway", organism)
