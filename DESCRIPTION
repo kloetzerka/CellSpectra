@@ -1,7 +1,7 @@
 Package: CellSpectra
 Type: Package
 Title: Quantifying Changes in Gene Expression Coordination
-Version: 0.1.0
+Version: 0.1.1
 Author: Konstantin A. Klötzer, Nancy R. Zhang, Katalin Susztak
 Maintainer: Konstantin A. Klötzer <konstantin.kloetzer@gmail.com>
 Description: This package enables the quantification of changes in gene
