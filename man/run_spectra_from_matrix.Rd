@@ -16,7 +16,7 @@ run_spectra_from_matrix(
 )
 }
 \arguments{
-\item{datH}{A normalized (e.g. tpm + log) matrix of gene expression data for healthy samples, with genes as rows.}
+\item{datH}{A normalized (e.g. tpm + log) matrix of gene expression data for healthy samples, with genes as columns.}
 
 \item{datD}{A normalized (e.g. tpm + log) matrix of gene expression data for diseased samples, similar to datH.}
 

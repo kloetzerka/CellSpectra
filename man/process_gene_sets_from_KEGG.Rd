@@ -4,12 +4,21 @@
 \alias{process_gene_sets_from_KEGG}
 \title{Process_gene_sets_from_KEGG}
 \usage{
-process_gene_sets_from_KEGG(organism, seurat_object)
+process_gene_sets_from_KEGG(
+  organism,
+  seurat_object,
+  use_genes_directly = FALSE,
+  gene_vec = c()
+)
 }
 \arguments{
 \item{organism}{Character. The KEGG organism code (e.g., "mmu" for mouse).}
 
-\item{seurat_object}{Seurat object used for the spectra analysis.}
+\item{seurat_object}{Seurat object used for the spectra analysis (gene symbols to use)}
+
+\item{use_genes_directly}{If TRUE gene_vec is used as gene symbol input.}
+
+\item{gene_vec}{Vector of genes considered in the gene set database.}
 }
 \value{
 A dataframe where rows are genes and columns are KEGG pathways.
