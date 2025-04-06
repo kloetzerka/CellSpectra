@@ -101,10 +101,10 @@ run_spectra_from_matrix <- function(datH, datD, go_sets, output_folder, coordina
       if (length(common_genes) < gene_number_threshold) {
 
         warning(paste("Less genes than threshold in ", func, " - skipping gene set"))
-        svdpvals_df[sample, func] <- NA
-        svdchisq_df[sample, func] <- NA
-        r2_df[sample, func] <- NA
-        deviant.pvalD_df[sample, func] <- NA
+        svdpvals_df[, func] <- NA
+        svdchisq_df[, func] <- NA
+        r2_df[, func] <- NA
+        deviant.pvalD_df[, func] <- NA
         next  # Skip to the next iteration of the loop
       }
 
@@ -124,10 +124,10 @@ run_spectra_from_matrix <- function(datH, datD, go_sets, output_folder, coordina
       if (length(filtered_genes) < gene_number_threshold) {
 
         warning(paste("Less genes than threshold in ", func, " - skipping gene set"))
-        svdpvals_df[sample, func] <- NA
-        svdchisq_df[sample, func] <- NA
-        r2_df[sample, func] <- NA
-        deviant.pvalD_df[sample, func] <- NA
+        svdpvals_df[, func] <- NA
+        svdchisq_df[, func] <- NA
+        r2_df[, func] <- NA
+        deviant.pvalD_df[, func] <- NA
         next  # Skip to the next iteration of the loop
       }
 
