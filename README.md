@@ -3,7 +3,16 @@
 Thank you for checking out our R package CellSpectra
 
 Please find additional information in our three Tutorials with example datasets 
-and R markdown files (/CellSpectra/tutorials/).
+and R markdown files: 
+
+#### Installtion tutorial:
+https://kloetzerka.github.io/CellSpectra/Installation.html
+
+#### CellSpectra onthefly basics
+https://kloetzerka.github.io/CellSpectra/CellSpectra_onthefly.html
+
+#### CellSpectra advanced
+https://kloetzerka.github.io/CellSpectra/CellSpectra_Advanced.html
 
 ## 1. System requirements:
 
