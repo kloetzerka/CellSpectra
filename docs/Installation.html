@@ -11,9 +11,9 @@
 
 <meta name="author" content="Konstantin A. Klötzer" />
 
-<meta name="date" content="2024-03-29" />
+<meta name="date" content="2025-01-19" />
 
-<title>scSpectra: Query - Reference analysis from a Seurat object</title>
+<title>Installation</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -350,142 +350,73 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">scSpectra: Query - Reference analysis from
-a Seurat object</h1>
+<h1 class="title toc-ignore">Installation</h1>
 <h4 class="author">Konstantin A. Klötzer</h4>
-<h4 class="date">2024-03-29</h4>
+<h4 class="date">2025-01-19</h4>
 
 </div>
 
 
-<div id="getting-started" class="section level2">
-<h2>Getting started</h2>
-<p>scSpectra compares the gene expression pattern of a function or
-pathway in a query with the same expression pattern in a reference. A p
-value indicates if a significant deviation from the expected gene
-expression in observed.</p>
-<p>The following example shows the “gold standard” in scSpectra analysis
-starting from a Seurat object. We realised that differences in cell
-numbers / expression sparsity can have an impact on spectra results.
-This can be significantly improved by performing an “onthefly” analysis.
-Thereby, reference samples match the total counts of each query
-individual query sample.</p>
-</div>
-<div id="loading-data-and-gene-sets" class="section level2">
-<h2>loading data and gene sets</h2>
-<p>To run the “onthefly” version of scSpectra we need two things:</p>
-<p>1.) A seurat object storing our single cell raw counts of query and
-reference samples</p>
-<p>scSpectra expects specific metadata columns within this object and
-raw counts accesible as a matrix. We will prepare the object with one of
-the scSpectra functions to make sure everything runs smooth.</p>
-<p>2.) A gene set database with genes grouped into funtionally-related
-pathways or functions.</p>
-<p>scSpectra expects the gene sets in a binary matrix of genes (rows)
-and gene sets (columns) with 0 and 1 indicating if a gene belongs to a
-gene set. You can import this matrix yourself or you use one of the
-scSpectra functions to create such a matrix.</p>
-<pre class="r"><code>#here we use the example ifnb dataset from Seurat.data to show basic functions
-seurat_object &lt;- readRDS(&quot;ifnb.rds&quot;)
+<div id="dependencies" class="section level2">
+<h2>Dependencies</h2>
+<p>KEGGREST Seurat SeuratObject sp dplyr Matrix</p>
+<p>If not installed already, we recommend to first install the latest
+version of Seurat and SeuratObject.</p>
+<pre class="r"><code># we remove the last version to demonstrate installation
+remove.packages(&quot;CellSpectra&quot;)</code></pre>
+<pre><code>## Removing package from &#39;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library&#39;
+## (as &#39;lib&#39; is unspecified)</code></pre>
+<pre class="r"><code>#time stamp
+start.time &lt;- Sys.time()
 
-#now we adapt the metadata columns. scSpectra needs to find the cell type annotation, sample identifier, conditions (query and reference). This can be done with the prepare_seurat_object function
-seurat_object &lt;- prepare_seurat_object(
-  seurat_obj = seurat_object, #our object to prepare
-  celltype_col = &quot;seurat_annotations&quot;, #column in which annotation is stored
-  sample_id_col = &quot;orig.ident&quot;, #sample identifier 
-  condition_col = &quot;stim&quot;, #column storing the condition information
-  query_list = c(&quot;STIM&quot;), #categories in the condition_col defining the query samples
-  control_list = c(&quot;CTRL&quot;) #categories in the condition_col defining the reference 
-)
+# download the .tar.gz file and change to the respective path
+install.packages(&quot;/Users/konstantin/Documents/GitHub/CellSpectra_0.1.0.tar.gz&quot;, repos = NULL, type = &quot;source&quot;)</code></pre>
+</div>
+<div id="load" class="section level2">
+<h2>Load</h2>
+<p>Check if we can load CellSpectra</p>
+<pre class="r"><code>end.time &lt;- Sys.time()
 
-#optional: scSpectra currently needs a dense matrix storing the counts. Convert if necessary.
-seurat_object@assays$RNA@counts &lt;- as.matrix(seurat_object@assays$RNA@counts)</code></pre>
-<pre><code>## Warning in asMethod(object): sparse-&gt;dense coercion: allocating vector of size
-## 1.5 GiB</code></pre>
-<p>Our object should now be ready for further analysis and should
-include all necessary information to proceed.</p>
-<p>But first, we need to load or generate our gene set database. The
-easiest way to do that is the process_gene_sets function and a library
-.txt file downloaded from the enrichR website. Here we will use GO terms
-but any library can be downloaded and used.</p>
-<p>Note that if you want to use another database you will have to save
-the gene sets in the right format as a file in the output_folder_base
-called “go_sets_modified.rds”.</p>
-<p>Optional: We also provide a function to generate the correct input
-gene set database from the GO website (process_gene_sets_from_GO). Check
-documentation. Again, you would have to save the file manually if using
-the run_spectra function.</p>
-</div>
-<div id="creating-the-onthefly-reference" class="section level2">
-<h2>creating the onthefly reference</h2>
-<p>Now we should have everything to create the onthefly reference. This
-can be quite memory intensive. If you are working with a large dataset,
-each cell type should be submitted separately. We are working on ways to
-make this more efficient in the future.</p>
-<p>The function creates pseudobulk per sample and cell type. The
-onthefly version makes sure that total counts of these reference
-pseudobulk samples is approximately the total counts of the query. So if
-the query is quite small we wouldn’t consider all cells of the reference
-samples (basically wasting money).</p>
-<p>That’s where the num_replicates become important. If the query is
-smaller than many of the reference samples, it makes sense to create a
-identical number of replicates per reference to use as many cells as
-possible. This improves the estimation of V1 (the reference expression
-pattern).</p>
-<p>Rule of thumb: If a query sample has only half the cells (or total
-counts) compared to a reference sample, we will only use half the cells
-of the reference. So basically, we can make two replicates from the one
-reference sample. num_replicates = 2. If the size is the same or the
-query has even more cells, num_replicates should be one.</p>
-<p>This function will generate subfolders within the output folder for
-each cell type of interest (specify in cell_types) with subfolders for
-each query sample. The cell_number_threshold makes sure that only
-samples with a sufficient number of cells will be analyzed. We recommend
-at least 10 cells per sample. Higher numbers might increase
-robustness.</p>
-<pre class="r"><code>#create references
-create_references(
-  seurat_object = seurat_object,
-  output_folder_base = output_folder_base,
-  num_replicates = 10, #this dataset doesn&#39;t include any biological replicates
-  cell_types = c(&quot;CD14 Mono&quot;, &quot;CD4 Naive T&quot;, &quot;CD4 Memory T&quot;), 
-  cell_number_threshold = 10, 
-  seed = 123
-)</code></pre>
-<p>Note: In a real world dataset scSpectra benefits from a wide and
-heterogenous reference representing the natural (technical and
-biological) variance across samples. The ifnb dataset is not really well
-suited for this kind of analysis without any biological replicates. The
-gene expression of any gene set is almost identical across our 10
-sampling replicates. Therefore, the query will be significantly
-different from this pattern in most gene sets.</p>
-</div>
-<div id="running-scspectra" class="section level2">
-<h2>Running scSpectra</h2>
-<p>If we followed these instructions we should have an output folder now
-containing everything we need to run spectra. While this can take quite
-long for large datasets and many cell types and gene sets, splitting the
-reference generation from the scpectra analysis will save resources
-(creating references is memory intensive, running spectra is not).</p>
-<p>The following function we compute fdr corrected p values and R2
-values for each cell type, query sample, and gene set.</p>
-<pre class="r"><code>run_spectra(
-  output_folder_base = output_folder_base,
-  cell_types = c(&quot;CD14 Mono&quot;, &quot;CD4 Naive T&quot;, &quot;CD4 Memory T&quot;), #parallelize by submitting cell type by cell type
-  CHISQ.MAX = 4 #this value cuts off the contribution of individual genes to the total dyscoordination of a gene set (p value). Increase this number if you are interested in gene expression deviation driven by individual genes. 
-)</code></pre>
-<p>You can now check the csv results and use them for further downstream
-analysis.</p>
-</div>
-<div id="final-remarks" class="section level2">
-<h2>Final Remarks</h2>
-<p>We hope this helps to run Spectra “onthefly” starting from a Seurat
-object and an enrichR library text file of any database. It’s also
-possible to run spectra from any (pseudo) bulk matrix without “onthefly”
-reference generation. We did that to compute the coordination within
-conditions (loo_coordination_from_matrix) or to analyse bulk RNA-seq
-data (run_spectra_from_matrix).</p>
-<p>Check our Repositories for more information.</p>
+execution_time &lt;- end.time - start.time
+
+print(execution_time)</code></pre>
+<pre><code>## Time difference of 10.75228 secs</code></pre>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.2.2 (2022-10-31)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS 15.1.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] CellSpectra_0.1.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] pillar_1.9.0           bslib_0.4.2            compiler_4.2.2        
+##  [4] jquerylib_0.1.4        GenomeInfoDb_1.34.9    XVector_0.38.0        
+##  [7] bitops_1.0-7           tools_4.2.2            zlibbioc_1.44.0       
+## [10] digest_0.6.31          lattice_0.20-45        tibble_3.2.1          
+## [13] lifecycle_1.0.4        jsonlite_1.8.4         evaluate_0.20         
+## [16] pkgconfig_2.0.3        png_0.1-8              rlang_1.1.4           
+## [19] Matrix_1.6-5           cli_3.6.3              rstudioapi_0.14       
+## [22] yaml_2.3.7             xfun_0.42              fastmap_1.1.1         
+## [25] GenomeInfoDbData_1.2.9 httr_1.4.5             dplyr_1.1.4           
+## [28] knitr_1.45             Biostrings_2.66.0      generics_0.1.3        
+## [31] S4Vectors_0.36.1       sass_0.4.5             vctrs_0.6.5           
+## [34] IRanges_2.32.0         grid_4.2.2             tidyselect_1.2.1      
+## [37] stats4_4.2.2           glue_1.8.0             R6_2.5.1              
+## [40] fansi_1.0.6            rmarkdown_2.20         purrr_1.0.2           
+## [43] tidyr_1.3.1            magrittr_2.0.3         htmltools_0.5.4       
+## [46] BiocGenerics_0.44.0    KEGGREST_1.38.0        utf8_1.2.4            
+## [49] RCurl_1.98-1.10        cachem_1.0.6           crayon_1.5.2</code></pre>
 </div>
 
 
