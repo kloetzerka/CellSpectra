@@ -15,7 +15,7 @@
 #'
 #' @return A dataframe with genes and their normalized residuals.
 #'
-#' #' @examples
+#' @examples
 #' #gene_set_name = "Postsynaptic Membrane Organization (GO:0001941)"
 #' #output_folder_base = "/.../output_human_extended/"
 #' #drivinggenes <- report_genes(output_folder_base, gene_set_name, cell_type = "TAL",

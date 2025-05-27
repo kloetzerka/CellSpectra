@@ -5,7 +5,7 @@ Thank you for checking out our R package CellSpectra
 Please find additional information in our three Tutorials with example datasets 
 and R markdown files: 
 
-#### Installtion tutorial:
+#### Installation tutorial:
 https://kloetzerka.github.io/CellSpectra/Installation.html
 
 #### CellSpectra onthefly basics
@@ -41,8 +41,12 @@ sp_2.1-3 dplyr_1.1.4 Matrix_1.6-5
 (If not installed already, we recommend to first install the latest version of Seurat 
 and SeuratObject)
 
-download the .tar.gz file and change to the respective path
+Option 1: Install the latest version via devtools:
+### library(devtools)
+### install_github("kloetzerka/CellSpectra")
 
+Option 2: download the .tar.gz file for your CellSpectra version of interest 
+from GitHub and change to the respective path
 
 ### install.packages("/.../CellSpectra_0.1.0.tar.gz", repos = NULL, type = "source")
 
