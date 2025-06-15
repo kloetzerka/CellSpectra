@@ -105,9 +105,9 @@ create_references <- function(seurat_object, output_folder_base = output_folder_
     diseased_samples <- intersect(valid_samples, unique(set_subsetD@meta.data$orig_ident))
 
     # Loop through each diseased sample
-    for (sample in diseased_samples) {
+    for (samplexyz in diseased_samples) {
       # Create pseudobulk for the query sample
-      query_sample_subset <- subset(set_subsetD, subset = orig_ident == sample)
+      query_sample_subset <- subset(set_subsetD, subset = orig_ident == samplexyz)
       query_counts <- Matrix::colSums(Matrix::t(query_sample_subset@assays$RNA@counts))
       query_total_count <- sum(query_counts)
       #print(sum(query_counts))
@@ -157,7 +157,7 @@ create_references <- function(seurat_object, output_folder_base = output_folder_
 
 
       # Save datH and datD matrices
-      sample_output_folder <- paste0(celltype_output_folder, "subfolder_sample_", sample, "/")
+      sample_output_folder <- paste0(celltype_output_folder, "subfolder_sample_", samplexyz, "/")
       if (!dir.exists(sample_output_folder)) {
         dir.create(sample_output_folder, recursive = TRUE)
       }
