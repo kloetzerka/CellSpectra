@@ -43,8 +43,11 @@
 #' colnames(counts) <- paste0("Cell", 1:8)
 #' seurat_object <- SeuratObject::CreateSeuratObject(counts = counts)
 #'
-#' # Downgrade assay to Seurat v4-compatible structure
-#' seurat_object[["RNA"]] <- as(seurat_object[["RNA"]], Class = "Assay")
+#'if ("Assay5" %in% class(seurat_object[["RNA"]])) {
+#'  counts <- Seurat::GetAssayData(seurat_object, layer = "counts")
+#'  assay_v4 <- SeuratObject::CreateAssayObject(counts = counts)
+#'  seurat_object[["RNA"]] <- assay_v4
+#'  Seurat::DefaultAssay(seurat_object) <- "RNA"}
 #'
 #' # Add minimal metadata
 #' seurat_object$celltypes <- c("CellType1", "CellType2", "CellType1", "CellType2",

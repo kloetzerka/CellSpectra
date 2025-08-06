@@ -20,8 +20,12 @@
 #' rownames(counts) <- paste0("Gene", 1:4)
 #' colnames(counts) <- paste0("Cell", 1:5)
 #' seurat_subset <- SeuratObject::CreateSeuratObject(counts = counts)
-#' #change to V4 structure
-#' seurat_subset[["RNA"]] <- as(seurat_subset[["RNA"]], Class = "Assay")
+#' # Check if Seurat V5 and convert
+#'if ("Assay5" %in% class(seurat_subset[["RNA"]])) {
+#'  counts <- Seurat::GetAssayData(seurat_subset, layer = "counts")
+#'  assay_v4 <- SeuratObject::CreateAssayObject(counts = counts)
+#'  seurat_subset[["RNA"]] <- assay_v4
+#'  Seurat::DefaultAssay(seurat_subset) <- "RNA"}
 #' # Run function
 #' pseudobulks <- create_pseudobulk(seurat_subset,
 #' target_count = 50,

@@ -2,9 +2,18 @@ Package: CellSpectra
 Type: Package
 Title: Quantifying Changes in Gene Expression Coordination
 Version: 0.1.1
-Author: Konstantin A. Klötzer, Nancy R. Zhang, Katalin Susztak
-Maintainer: Konstantin A. Klötzer <konstantin.kloetzer@gmail.com>
-Description: This package enables the quantification of changes in gene
+Authors@R: c(
+  person(given = c("Konstantin", "A."),
+         family = "Klötzer",
+         role = c("aut", "cre"),
+         email = "konstantin.kloetzer@gmail.com"),
+  person(given = c("Nancy", "R."),
+         family = "Zhang",
+         role = "aut"),
+  person(given = "Katalin",
+         family = "Susztak",
+         role = "aut"))
+Description: Enables the quantification of changes in gene
     expression coordination of cellular functions within single-cell RNA-seq
     atlases. It provides tools for comparing query samples to reference data and
     identifying dysregulated pathways at single-sample resolution.
@@ -17,14 +26,13 @@ RoxygenNote: 7.3.1
 Depends:
 Imports:
     dplyr,
-    magrittr,
     stats,
     utils,
     Matrix,
     methods, 
     KEGGREST,
     tidyr,
-    SeuratObject
 Suggests:
-    Seurat
-    
+    Seurat,
+    SeuratObject,
+    magrittr,

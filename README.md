@@ -69,6 +69,9 @@ or
 
 https://github.com/susztaklab/SISKA
 
-    
+## 5. Reference
+If you are using CellSpectra for your research please cite our manuscript "Analysis of individual patient pathway coordination in a cross-species single-cell kidney atlas" (Klötzer et al., Nature Genetics 2025, DOI: 10.1038/s41588-025-02285-0) 
+
+https://www.nature.com/articles/s41588-025-02285-0
   
 

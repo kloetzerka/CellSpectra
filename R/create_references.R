@@ -29,8 +29,12 @@
 #' # Create a minimal Seurat object
 #' seurat_object <- SeuratObject::CreateSeuratObject(counts = counts)
 #'
-#' # Downgrade assay to Seurat v4-compatible structure (if Seurat v5 is used)
-#' seurat_object[["RNA"]] <- as(seurat_object[["RNA"]], Class = "Assay")
+#' # Check if Seurat V5 and convert
+#'if ("Assay5" %in% class(seurat_object[["RNA"]])) {
+#'  counts <- Seurat::GetAssayData(seurat_object, layer = "counts")
+#'  assay_v4 <- SeuratObject::CreateAssayObject(counts = counts)
+#'  seurat_object[["RNA"]] <- assay_v4
+#'  Seurat::DefaultAssay(seurat_object) <- "RNA"}
 #'
 #' # Add minimal metadata: cell type, sample, and condition
 #' seurat_object$celltypes <- c("CellType1", "CellType2", "CellType1", "CellType2", "CellType1")
